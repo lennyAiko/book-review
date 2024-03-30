@@ -16,9 +16,9 @@ class BookController extends Controller
         $title = $request->input('title');
         $filter = $request->input('filter', '');
 
-        $books = Book::when($title, fn ($query, $title) => $query->title($title));
+        $books = Book::when($title, fn($query, $title) => $query->title($title));
 
-        $books = match($filter) {
+        $books = match ($filter) {
             'popular_last_month' => $books->popularLastMonth(),
             'popular_last_6months' => $books->popularLast6Months(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
@@ -30,9 +30,9 @@ class BookController extends Controller
 
         $cacheKey = 'books:' . $filter . ':' . $title;
 
-        $books = cache()->remember($cacheKey, 3600, fn () => $books->get()); // cache for 1 hour
+        $books = cache()->remember($cacheKey, 3600, fn() => $books->get()); // cache for 1 hour
 
-        return view('books.index', ['books' => $books->paginate() ]);
+        return view('books.index', ['books' => $books]);
     }
 
     /**
@@ -59,11 +59,11 @@ class BookController extends Controller
         $cacheKey = 'book:' . $id;
 
         $book = cache()->remember(
-            $cacheKey, 
-            3600, 
-            fn () => 
+            $cacheKey,
+            3600,
+            fn() =>
             Book::with([
-                'reviews' => fn ($query) => $query->latest()
+                'reviews' => fn($query) => $query->latest()
             ])->withAvgRating()->withReviewsCount()->findOrFail($id)
         ); // cache for 1 hour
 
