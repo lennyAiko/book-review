@@ -22,6 +22,11 @@ class Book extends Model
         return $query->where("title","like","%". $title ."%");
     }
 
+    public function scopeWithReviews(Builder $query, array $reviews): Builder | QueryBuilder
+    {
+        
+    }
+
     public function scopePopular(Builder $query, $from = null, $to = null): Builder | QueryBuilder
     {
         return $query->withCount([
