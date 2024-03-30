@@ -21,15 +21,22 @@ class ReviewController extends Controller
      */
     public function create(Book $book)
     {
-        return view("books.review.create", ['book' => $book]);
+        return view("books.reviews.create", ['book' => $book]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Book $book)
     {
-        //
+        $data = $request->validate([
+            'review' => 'required|min:15',
+            'rating' => 'required|between:1,5|integer',
+        ]);
+
+        $book->reviews()->create($data);
+
+        return redirect()->route('books.show', $book);
     }
 
     /**
